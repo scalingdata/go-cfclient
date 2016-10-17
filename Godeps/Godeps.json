@@ -40,11 +40,11 @@
 			"Rev": "eb2e83c1df892d2c9ad5a3c85672da30be585dfd"
 		},
 		{
-			"ImportPath": "golang.org/x/net/context",
+			"ImportPath": "github.com/scalingdata/go-x-net/context",
 			"Rev": "7dbad50ab5b31073856416cdcfeb2796d682f844"
 		},
 		{
-			"ImportPath": "golang.org/x/oauth2",
+			"ImportPath": "github.com/scalingdata/go-x-oauth2",
 			"Rev": "2baa8a1b9338cf13d9eeb27696d761155fa480be"
 		}
 	]

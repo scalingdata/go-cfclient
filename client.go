@@ -9,8 +9,8 @@ import (
 	"net/http"
 	"net/url"
 
-	"golang.org/x/net/context"
-	"golang.org/x/oauth2"
+	"github.com/scalingdata/go-x-net/context"
+	"github.com/scalingdata/go-x-oauth2"
 )
 
 //Client used to communicate with Cloud Foundry
