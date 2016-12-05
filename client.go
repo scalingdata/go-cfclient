@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"crypto/x509"
 
 	"github.com/scalingdata/go-x-net/context"
 	"github.com/scalingdata/go-x-oauth2"
@@ -32,6 +33,7 @@ type Config struct {
 	Username          string `json:"user"`
 	Password          string `json:"password"`
 	SkipSslValidation bool   `json:"skip_ssl_validation"`
+	CAPem             string `json:"ca_pem"`
 	HttpClient        *http.Client
 	Token             string `json:"auth_token"`
 	TokenSource       oauth2.TokenSource
@@ -92,11 +94,22 @@ func NewClient(config *Config) (client *Client, err error) {
 
 	ctx := oauth2.NoContext
 	if config.SkipSslValidation == false {
-		ctx = context.WithValue(ctx, oauth2.HTTPClient, defConfig.HttpClient)
+		// If a custom CA pem is specified, set up the cert pool
+		httpClient := defConfig.HttpClient
+		if config.CAPem != "" {
+			certPool := x509.NewCertPool()
+			if !certPool.AppendCertsFromPEM([]byte(config.CAPem)) {
+				return nil, fmt.Errorf("Unable to decode keychain from PEM string")
+			}
+			transport := &http.Transport{TLSClientConfig: &tls.Config{RootCAs: certPool}}
+			httpClient = &http.Client{Transport: transport}
+		}
+		ctx = context.WithValue(ctx, oauth2.HTTPClient, httpClient)
 	} else {
 		tr := &http.Transport{
 			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 		}
+
 		ctx = context.WithValue(ctx, oauth2.HTTPClient, &http.Client{Transport: tr})
 	}
 
